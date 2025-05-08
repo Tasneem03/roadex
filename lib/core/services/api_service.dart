@@ -239,24 +239,36 @@ class ApiService {
 
 
   // get available providers for a specific service
-  Future<List<Provider>> getProviders(int serviceId) async {
+  Future<List<ProviderModel>> getAvailableProviders(int serviceId) async {
     var url = Uri.parse('$baseUrl/Providers/available-providers/$serviceId');
 
     try {
-      final response = await http.get(url);
+      String? token = await tokenStorage.getToken(); // Retrieve the token
+
+      if (token == null) {
+        throw Exception("No authentication token found.");
+      }
+
+      final response = await http.get(
+        url,
+        headers: {
+          "Authorization": "Bearer $token",
+          "Content-Type": "application/json",
+        },
+      );
 
       if (response.statusCode == 200) {
         List<dynamic> jsonData = jsonDecode(response.body);
-
-        return jsonData.map((json) => Provider.fromJson(json)).toList();
+        return jsonData.map((json) => ProviderModel.fromJson(json)).toList();
       } else {
-        print('Request failed with status: ${response.statusCode} body == ${response.body}');
+        print('Request failed with status: ${response.statusCode}, body: ${response.body}');
         return [];
       }
     } catch (e) {
-      print('Error fetching services: $e');
+      print('Error fetching providers: $e');
       return [];
     }
   }
+
 
 }

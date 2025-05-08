@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intro_screens/routes/app_routes.dart';
+import 'package:intro_screens/screens/home/providers_screen.dart';
 import '../../core/models/service_model.dart';
 
 class ServiceDetailsScreen extends StatelessWidget {
@@ -56,7 +57,8 @@ class ServiceDetailsScreen extends StatelessWidget {
                   const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, AppRoutes.myCars);
+                      // Navigator.pushNamed(context, AppRoutes.myCars);
+                      Navigator.push(context, MaterialPageRoute(builder: (context) =>ProvidersScreen(serviceModel: service)));
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Theme.of(context).primaryColor,

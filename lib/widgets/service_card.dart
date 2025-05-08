@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:intro_screens/routes/app_routes.dart';
 import 'package:intro_screens/screens/home/service_details_screen.dart';
+import 'package:provider/provider.dart';
 
 import '../core/models/service_model.dart';
+import '../map_pages/map_screen.dart';
+import '../providers/model_provider.dart';
 
 class ServiceCard extends StatelessWidget {
   const ServiceCard({Key? key, required this.service}) : super(key: key);

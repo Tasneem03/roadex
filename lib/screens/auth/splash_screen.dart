@@ -73,19 +73,24 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future startAnimation() async {
     await Future.delayed(const Duration(milliseconds: 500));
+    if (!mounted) return;
+
     setState(() {
       _isAnimated = true;
     });
+
     await Future.delayed(const Duration(milliseconds: 1500));
+    if (!mounted) return; // Check again before accessing context
+
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+    if (!mounted) return; // One more check before navigation
     if (authProvider.isAuthenticated) {
       Navigator.pushReplacementNamed(context, AppRoutes.navigationMenu);
-      /*Navigator.pushReplacement(context, MaterialPageRoute(
-        builder: (context) => NavigationMenu(serviceModel: widget.serviceModel),),);*/
     } else {
       Navigator.pushReplacementNamed(context, AppRoutes.intro);
     }
   }
+
+
 }
-
-

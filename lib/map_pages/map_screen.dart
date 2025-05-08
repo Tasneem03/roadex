@@ -1,9 +1,11 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intro_screens/core/models/provider_model.dart'; // Import ProviderModel
+import 'package:intro_screens/providers/model_provider.dart'; // Import ModelProvider
+import 'package:intro_screens/routes/app_routes.dart';
 import 'package:location/location.dart';
-
+import 'package:provider/provider.dart';
 import '../core/services/api_service.dart';
 
 class MapScreen extends StatefulWidget {
@@ -19,9 +21,6 @@ class _MapScreenState extends State<MapScreen> {
   final ApiService _apiService = ApiService();
   LatLng? _currentPosition;
   bool _isUpdating = false;
-
-  final double targetLatitude = 30.575;
-  final double targetLongitude = 30.71111;
 
   @override
   void initState() {
@@ -78,63 +77,65 @@ class _MapScreenState extends State<MapScreen> {
     });
 
     if (success) {
-      /*Navigator.push(context, MaterialPageRoute(builder: (context) {
-        return ProvidersScreen(serviceId: widget.serviceModel.id);
-      }));*/
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Location updated successfully!")),
+        const SnackBar(content: Text("Location updated successfully!")),
       );
+      Navigator.pushNamed(context, AppRoutes.navigationMenu);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Failed to update location!")),
+        const SnackBar(content: Text("Failed to update location!")),
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Access the providers list from the ModelProvider
+    final providerModel = Provider.of<ModelProvider<ProviderModel>>(context);
+    final providers = providerModel.items; // List of ProviderModel objects
+
+    print("Providers count: ${providers.length}");
+    for (var provider in providers) {
+      print("Provider: ${provider.username}, Lat: ${provider.latitude}, Lng: ${provider.longitude}");
+    }
+
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-            title: Text(
-              "Confirm Your Location",
-              style: TextStyle(
-                color: Theme.of(context).primaryColor,
-              ),
-            ),
-            backgroundColor: Colors.white,
-            elevation: 2,
-            leading: IconButton(
-              onPressed: Navigator.of(context).pop,
-              icon:
-                  Icon(Icons.arrow_back, color: Theme.of(context).primaryColor),
-            )),
         body: Stack(
           children: [
             _currentPosition == null
                 ? Center(
-                    child: CircularProgressIndicator(
-                        color: Theme.of(context).primaryColor))
+                child: CircularProgressIndicator(
+                    color: Theme.of(context).primaryColor))
                 : GoogleMap(
-                    onMapCreated: (GoogleMapController controller) {
-                      _mapController.complete(controller);
-                    },
-                    initialCameraPosition:
-                        CameraPosition(target: _currentPosition!, zoom: 13),
-                    markers: {
-                      Marker(
-                        markerId: const MarkerId("currentLocation"),
-                        icon: BitmapDescriptor.defaultMarker,
-                        position: _currentPosition!,
-                      ),
-                      Marker(
-                        markerId: const MarkerId("targetLocation"),
-                        icon: BitmapDescriptor.defaultMarkerWithHue(
-                            BitmapDescriptor.hueBlue),
-                        position: LatLng(targetLatitude, targetLongitude),
-                      ),
-                    },
-                  ),
+              onMapCreated: (GoogleMapController controller) {
+                _mapController.complete(controller);
+              },
+              initialCameraPosition:
+              CameraPosition(target: _currentPosition!, zoom: 13),
+              markers: {
+                // Marker for the current user location
+                Marker(
+                  markerId: const MarkerId("currentLocation"),
+                  icon: BitmapDescriptor.defaultMarker,
+                  position: _currentPosition!,
+                ),
+
+                // Add markers for all providers
+                ...providers.map((provider) {
+                  return Marker(
+                    markerId: MarkerId(provider.providerId),
+                    icon: BitmapDescriptor.defaultMarkerWithHue(
+                        BitmapDescriptor.hueBlue),
+                    position: LatLng(provider.latitude, provider.longitude),
+                    infoWindow: InfoWindow(
+                      title: provider.username,
+                      snippet: "⭐ Rating: ${provider.rating.toStringAsFixed(1)}",
+                    ),
+                  );
+                }).toSet(),
+              },
+            ),
             Positioned(
               bottom: 30,
               left: 20,
@@ -147,10 +148,8 @@ class _MapScreenState extends State<MapScreen> {
                 ),
                 child: _isUpdating
                     ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text(
-                        "Confirm Location",
-                        style: TextStyle(color: Colors.white, fontSize: 16),
-                      ),
+                    : const Text("Confirm Location",
+                    style: TextStyle(color: Colors.white, fontSize: 16)),
               ),
             ),
           ],

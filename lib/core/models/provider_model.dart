@@ -1,12 +1,11 @@
-
-class Provider {
+class ProviderModel {
   final String providerId;
   final String username;
   final double rating;
   final double latitude;
   final double longitude;
 
-  Provider({
+  ProviderModel({
     required this.providerId,
     required this.username,
     required this.rating,
@@ -15,8 +14,8 @@ class Provider {
   });
 
 
-  factory Provider.fromJson(Map<String, dynamic> json) {
-    return Provider(
+  factory ProviderModel.fromJson(Map<String, dynamic> json) {
+    return ProviderModel(
       providerId: json["providerId"],
       username: json["username"],
       rating: (json["rating"] as num).toDouble(),

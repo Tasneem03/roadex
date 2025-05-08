@@ -60,7 +60,7 @@ class _AddCarFormState extends State<AddCarForm> {
   final _formKey = GlobalKey<FormState>();
 
   final List<TextEditingController> _numberControllers =
-      List.generate(4, (index) => TextEditingController());
+  List.generate(4, (index) => TextEditingController());
   final TextEditingController _makeController = TextEditingController();
   final TextEditingController _modelController = TextEditingController();
   final TextEditingController _yearController = TextEditingController();
@@ -99,7 +99,7 @@ class _AddCarFormState extends State<AddCarForm> {
         return;
       }
 
-      String license = "$_letter1$_letter2$_letter3$numberPart";
+      String license = "$_letter1 $_letter2 $_letter3 - $numberPart";
       String make = _makeController.text.trim();
       String model = _modelController.text.trim();
       String year = _yearController.text.trim();
@@ -205,7 +205,7 @@ class _AddCarFormState extends State<AddCarForm> {
               TextFormField(
                 controller: _makeController,
                 decoration:
-                    const InputDecoration(labelText: "Make (e.g., Toyota)"),
+                const InputDecoration(labelText: "Make (e.g., Toyota)"),
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(
                       RegExp(r'^[a-zA-Z\u0600-\u06FF ]+$')),
@@ -237,7 +237,7 @@ class _AddCarFormState extends State<AddCarForm> {
               TextFormField(
                 controller: _yearController,
                 decoration:
-                    const InputDecoration(labelText: "Year (e.g., 2022)"),
+                const InputDecoration(labelText: "Year (e.g., 2022)"),
                 keyboardType: TextInputType.number,
                 inputFormatters: [
                   FilteringTextInputFormatter.digitsOnly,
@@ -394,8 +394,7 @@ class _MyCarsState extends State<MyCars> {
         final car = cars[index];
         return GestureDetector(
           onTap: () {
-            Navigator.pushNamed(context, AppRoutes.map,
-            arguments: car);
+            Navigator.pushNamed(context, AppRoutes.map);
           },
           child: Card(
             color: Colors.white,
@@ -421,6 +420,3 @@ class _MyCarsState extends State<MyCars> {
     );
   }
 }
-
-
-
