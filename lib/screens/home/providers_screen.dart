@@ -25,7 +25,21 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Available Providers')),
+      // appBar: AppBar(title: ),
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).primaryColor,
+        elevation: 1,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white,),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: const Text('Available Providers',
+          style: TextStyle(color: Colors.white),
+        ),
+        centerTitle: true,
+      ),
       body: FutureBuilder<List<ProviderModel>>(
         future: _providersFuture,
         builder: (context, snapshot) {
