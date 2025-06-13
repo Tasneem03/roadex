@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intro_screens/map_pages/map_screen.dart';
-import 'package:intro_screens/screens/home/providers_screen.dart';
-
 import 'package:intro_screens/widgets/navigation_menu.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/auth/signup_screen.dart';
@@ -30,16 +28,16 @@ class AppRoutes {
   static const String map = '/map';
 
   static Map<String, Widget Function(BuildContext)> routes = {
-    splash: (context) => SplashScreen(),
-    intro: (context) => IntroScreen(),
-    login: (context) => LoginScreen(),
-    signup: (context) => SignupScreen(),
-    home: (context) => HomeScreen(),
-    profile: (context) => ProfileScreen(),
-    chat: (context) => ChatScreen(),
+    splash: (context) => const SplashScreen(),
+    intro: (context) => const IntroScreen(),
+    login: (context) => const LoginScreen(),
+    signup: (context) => const SignupScreen(),
+    home: (context) => const HomeScreen(),
+    profile: (context) => const ProfileScreen(),
+    chat: (context) => const ChatScreen(),
     services: (context) => ServicesScreen(),
     myCars: (context) => CarsScreen(),
-    navigationMenu: (context) => NavigationMenu(),
-    map: (context) => MapScreen(),
+    navigationMenu: (context) => const NavigationMenu(),
+    map: (context) => const MapScreen(),
   };
 }

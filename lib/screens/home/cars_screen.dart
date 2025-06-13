@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:intro_screens/routes/app_routes.dart';
 
 import '../../core/models/car_model.dart';
+import '../../core/services/booking_storage.dart';
 import '../../core/services/api_service.dart';
 
 class CarsScreen extends StatefulWidget {
@@ -374,7 +375,7 @@ class _MyCarsState extends State<MyCars> {
           const SizedBox(height: 40),
           ElevatedButton(
             onPressed: () {
-              DefaultTabController.of(context)?.animateTo(0);
+              DefaultTabController.of(context).animateTo(0);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xff3A3434),
@@ -393,7 +394,9 @@ class _MyCarsState extends State<MyCars> {
       itemBuilder: (context, index) {
         final car = cars[index];
         return GestureDetector(
-          onTap: () {
+          onTap: () async{
+            await BookingStorage().saveCarId(car.id);
+
             Navigator.pushNamed(context, AppRoutes.map);
           },
           child: Card(

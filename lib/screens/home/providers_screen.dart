@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intro_screens/core/models/service_model.dart';
 import 'package:intro_screens/routes/app_routes.dart';
 import '../../core/models/provider_model.dart';
+import '../../core/services/booking_storage.dart';
 import '../../core/services/api_service.dart';
 
 class ProvidersScreen extends StatefulWidget {
@@ -62,7 +63,8 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
                 title: Text(provider.username),
                 subtitle: Text('Rating: ${provider.rating} ⭐'),
                 trailing: const Icon(Icons.arrow_forward_ios),
-                onTap: () {
+                onTap: () async{
+                  await BookingStorage().saveProviderId(provider.providerId);
                   // Handle provider selection
                   Navigator.pushNamed(context, AppRoutes.myCars);
                   print('Selected Provider: ${provider.username}');

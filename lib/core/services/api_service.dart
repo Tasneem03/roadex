@@ -55,9 +55,6 @@ class ApiService {
         },
       );
 
-      // print("API Response Status Code: ${response.statusCode}");
-      // print("API Response Body: ${response.body}"); //
-
       if (response.statusCode == 200) {
         Map<String, dynamic> data = jsonDecode(response.body);
         return UserModel.fromJson(data);
@@ -76,7 +73,11 @@ class ApiService {
   }
 
   // add car function
-  Future<bool> addCar({required String licensePlate, required String make, required String model, required String year}) async {
+  Future<bool> addCar(
+      {required String licensePlate,
+      required String make,
+      required String model,
+      required String year}) async {
     var url = Uri.parse('$baseUrl/Vehicles');
 
     try {
@@ -167,7 +168,6 @@ class ApiService {
     }
   }
 
-
   // update location
   Future<bool> updateLocation(double latitude, double longitude) async {
     String? token = await tokenStorage.getToken();
@@ -188,9 +188,6 @@ class ApiService {
       }),
     );
 
-    // print("API Response Code: ${response.statusCode}");
-    // print("API Response Body: ${response.body}");
-
     if (response.statusCode == 200 || response.statusCode == 204) {
       return true;
     } else {
@@ -199,7 +196,8 @@ class ApiService {
   }
 
   // make a service request
-  Future<bool> requestService(int serviceId, int vehicleId, String providerId, double latitude, double longitude, String notes) async{
+  Future<bool> requestService(int serviceId, int vehicleId, String providerId,
+      double? latitude, double? longitude, String? notes) async {
     var url = Uri.parse('$baseUrl/ServiceRequests');
 
     try {
@@ -237,7 +235,6 @@ class ApiService {
     }
   }
 
-
   // get available providers for a specific service
   Future<List<ProviderModel>> getAvailableProviders(int serviceId) async {
     var url = Uri.parse('$baseUrl/Providers/available-providers/$serviceId');
@@ -269,6 +266,4 @@ class ApiService {
       return [];
     }
   }
-
-
 }
