@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intro_screens/core/models/provider_model.dart';
 import 'package:intro_screens/providers/model_provider.dart';
-import 'package:intro_screens/routes/app_routes.dart';
+import 'package:intro_screens/screens/home/service_requests_screen.dart';
 import 'package:location/location.dart';
 import 'package:provider/provider.dart';
 
-import '../core/services/booking_storage.dart';
-import '../core/services/api_service.dart';
+import '../../core/services/api_service.dart';
+import '../../core/services/booking_storage.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -39,7 +39,8 @@ class _MapScreenState extends State<MapScreen> {
 
   // Add method to load booking data
   Future<void> _loadBookingData() async {
-    Map<String, dynamic> bookingData = await BookingStorage().getAllBookingData();
+    Map<String, dynamic> bookingData =
+        await BookingStorage().getAllBookingData();
 
     setState(() {
       serviceId = bookingData['serviceId'];
@@ -119,13 +120,12 @@ class _MapScreenState extends State<MapScreen> {
 
     // Then create service request
     bool serviceRequestSuccess = await _apiService.requestService(
-      serviceId!,
-       carId!,
-       providerId!,
-      _currentPosition!.latitude,
-      _currentPosition!.longitude,
-      ""
-    );
+        serviceId!,
+        carId!,
+        providerId!,
+        _currentPosition!.latitude,
+        _currentPosition!.longitude,
+        "");
 
     setState(() {
       _isUpdating = false;
@@ -138,7 +138,13 @@ class _MapScreenState extends State<MapScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Service request created successfully!")),
       );
-      Navigator.pushNamed(context, AppRoutes.navigationMenu);
+      // Navigator.pushNamed(context, AppRoutes.navigationMenu);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const ServiceRequestsScreen(),
+        ),
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Failed to create service request!")),
@@ -211,7 +217,6 @@ class _MapScreenState extends State<MapScreen> {
                       }).toSet(),
                     },
                   ),
-
             Positioned(
               bottom: 40,
               left: 0,

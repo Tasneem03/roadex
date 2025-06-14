@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intro_screens/map_pages/map_screen.dart';
+import 'package:intro_screens/screens/home/map_screen.dart';
 import 'package:intro_screens/widgets/navigation_menu.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/auth/signup_screen.dart';
