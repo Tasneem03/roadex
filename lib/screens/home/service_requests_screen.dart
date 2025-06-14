@@ -738,8 +738,6 @@ class _ServiceRequestsScreenState extends State<ServiceRequestsScreen> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildDetailRow(
-                  'Request ID', request.serviceRequestId.toString()),
               _buildDetailRow('Provider', request.providerName),
               _buildDetailRow('Phone', request.providerPhoneNumber),
               _buildDetailRow('Status', request.status),

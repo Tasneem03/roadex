@@ -82,86 +82,86 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
           height: 400,
           child: reviews.isEmpty
               ? const Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.rate_review_outlined,
-                    size: 64, color: Colors.grey),
-                SizedBox(height: 16),
-                Text('No reviews yet',
-                    style: TextStyle(fontSize: 16, color: Colors.grey)),
-              ],
-            ),
-          )
-              : ListView.builder(
-            itemCount: reviews.length,
-            itemBuilder: (context, index) {
-              final review = reviews[index];
-              return Card(
-                margin: const EdgeInsets.only(bottom: 12),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // Customer name and date
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            review.customerName,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                            ),
-                          ),
-                          Text(
-                            _formatDate(review.createdAt),
-                            style: const TextStyle(
-                              color: Colors.grey,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      // Rating stars
-                      Row(
-                        children: [
-                          Row(
-                            children: List.generate(5, (starIndex) {
-                              return Icon(
-                                starIndex < review.rating
-                                    ? Icons.star
-                                    : Icons.star_border,
-                                color: Colors.amber,
-                                size: 20,
-                              );
-                            }),
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            '${review.rating}/5',
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                      // Comment
-                      if (review.comment != null &&
-                          review.comment!.isNotEmpty) ...[
-                        const SizedBox(height: 8),
-                        Text(
-                          review.comment!,
-                          style: const TextStyle(fontSize: 14),
-                        ),
-                      ],
+                      Icon(Icons.rate_review_outlined,
+                          size: 64, color: Colors.grey),
+                      SizedBox(height: 16),
+                      Text('No reviews yet',
+                          style: TextStyle(fontSize: 16, color: Colors.grey)),
                     ],
                   ),
+                )
+              : ListView.builder(
+                  itemCount: reviews.length,
+                  itemBuilder: (context, index) {
+                    final review = reviews[index];
+                    return Card(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Customer name and date
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  review.customerName,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                Text(
+                                  _formatDate(review.createdAt),
+                                  style: const TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            // Rating stars
+                            Row(
+                              children: [
+                                Row(
+                                  children: List.generate(5, (starIndex) {
+                                    return Icon(
+                                      starIndex < review.rating
+                                          ? Icons.star
+                                          : Icons.star_border,
+                                      color: Colors.amber,
+                                      size: 20,
+                                    );
+                                  }),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  '${review.rating}',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                            // Comment
+                            if (review.comment != null &&
+                                review.comment!.isNotEmpty) ...[
+                              const SizedBox(height: 8),
+                              Text(
+                                review.comment!,
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                    );
+                  },
                 ),
-              );
-            },
-          ),
         ),
         actions: [
           TextButton(
@@ -218,41 +218,96 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
             itemCount: providers.length,
             itemBuilder: (context, index) {
               final provider = providers[index];
-              return Card(
+              return Container(
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: ListTile(
-                  leading: const CircleAvatar(
-                    child: Icon(Icons.person),
-                  ),
-                  title: Text(
-                    provider.username,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Row(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
                     children: [
-                      const Icon(Icons.star, color: Colors.amber, size: 16),
-                      const SizedBox(width: 4),
-                      Text('${provider.rating}'),
-                    ],
-                  ),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.rate_review, color: Colors.blue),
-                        onPressed: () =>
-                            _showProviderReviews(context, provider),
-                        tooltip: 'View Reviews',
+                      CircleAvatar(
+                        radius: 28,
+                        backgroundColor:
+                            Theme.of(context).primaryColor.withOpacity(0.1),
+                        child: Text(
+                          provider.username[0].toUpperCase(),
+                          style: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 22,
+                          ),
+                        ),
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.arrow_forward_ios),
-                        onPressed: () async {
-                          await BookingStorage()
-                              .saveProviderId(provider.providerId);
-                          Navigator.pushNamed(context, AppRoutes.myCars);
-                          print('Selected Provider: ${provider.username}');
-                        },
-                        tooltip: 'Select Provider',
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              provider.username,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Row(
+                              children: [
+                                ...List.generate(
+                                  5,
+                                  (starIndex) => Icon(
+                                    starIndex < provider.rating.round()
+                                        ? Icons.star
+                                        : Icons.star_border,
+                                    size: 16,
+                                    color: Colors.amber,
+                                  ),
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  provider.rating.toStringAsFixed(1),
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Column(
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.rate_review,
+                                color: Colors.blue),
+                            onPressed: () =>
+                                _showProviderReviews(context, provider),
+                            tooltip: 'View Reviews',
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.arrow_forward_ios,
+                                color: Theme.of(context).primaryColor,
+                                size: 18),
+                            onPressed: () async {
+                              await BookingStorage()
+                                  .saveProviderId(provider.providerId);
+                              Navigator.pushNamed(context, AppRoutes.myCars);
+                            },
+                            tooltip: 'Select Provider',
+                          ),
+                        ],
                       ),
                     ],
                   ),

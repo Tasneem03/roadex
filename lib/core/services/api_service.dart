@@ -402,4 +402,33 @@ class ApiService {
       return [];
     }
   }
+
+  // update profile info
+  Future<bool> updateProfile(String username, String email, String phoneNumber) async {
+    String? token = await tokenStorage.getToken();
+    if (token == null) {
+      return false;
+    }
+
+    final response = await http.put(
+      Uri.parse("$baseUrl/Customers/me"),
+      headers: {
+        "Authorization": "Bearer $token",
+        "Content-Type": "application/json; charset=UTF-8",
+      },
+      body: jsonEncode({
+        "username": username,
+        "email": email,
+        "phoneNumber": phoneNumber
+      }),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 204) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+
 }
