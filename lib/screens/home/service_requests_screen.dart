@@ -616,7 +616,7 @@ class _ServiceRequestsScreenState extends State<ServiceRequestsScreen> {
                               ),
 
                               // Notes (if available)
-                              if (request.notes.isNotEmpty) ...[
+                              if (request.notes?.isNotEmpty == true) ...[
                                 const SizedBox(height: 8),
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -639,7 +639,6 @@ class _ServiceRequestsScreenState extends State<ServiceRequestsScreen> {
                                   ],
                                 ),
                               ],
-
                               const SizedBox(height: 16),
 
                               // Action buttons
@@ -743,8 +742,8 @@ class _ServiceRequestsScreenState extends State<ServiceRequestsScreen> {
               _buildDetailRow('Status', request.status),
               _buildDetailRow('Time',
                   DateFormatter.formatRequestDate(request.dateRequested)),
-              if (request.notes.isNotEmpty)
-                _buildDetailRow('Notes', request.notes),
+              if ((request.notes ?? '').isNotEmpty)
+                _buildDetailRow('Notes', request.notes!),
             ],
           ),
           actions: [

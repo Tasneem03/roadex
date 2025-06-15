@@ -4,7 +4,7 @@ class ServiceRequestModel {
   final String serviceName;
   final String status;
   final String dateRequested;
-  final String notes;
+  final String? notes;
   final String providerPhoneNumber;
 
   ServiceRequestModel(
@@ -14,7 +14,7 @@ class ServiceRequestModel {
       required this.status,
       required this.dateRequested,
       required this.providerPhoneNumber,
-      required this.notes});
+      this.notes});
 
   factory ServiceRequestModel.fromJson(Map<String, dynamic> json) {
     return ServiceRequestModel(
