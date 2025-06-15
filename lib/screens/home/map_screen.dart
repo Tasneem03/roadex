@@ -2,13 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:intro_screens/core/models/provider_model.dart'; // Import ProviderModel
-import 'package:intro_screens/providers/model_provider.dart'; // Import ModelProvider
-import 'package:intro_screens/routes/app_routes.dart';
+import 'package:intro_screens/core/models/provider_model.dart';
+import 'package:intro_screens/providers/model_provider.dart';
+import 'package:intro_screens/screens/home/service_requests_screen.dart';
 import 'package:location/location.dart';
 import 'package:provider/provider.dart';
 
-import '../core/services/api_service.dart';
+import '../../core/services/api_service.dart';
+import '../../core/services/booking_storage.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -24,10 +25,32 @@ class _MapScreenState extends State<MapScreen> {
   LatLng? _currentPosition;
   bool _isUpdating = false;
 
+  // Add variables to store booking data
+  int? serviceId;
+  String? providerId;
+  int? carId;
+
   @override
   void initState() {
     super.initState();
     _getCurrentLocation();
+    _loadBookingData(); // Load stored booking data
+  }
+
+  // Add method to load booking data
+  Future<void> _loadBookingData() async {
+    Map<String, dynamic> bookingData =
+        await BookingStorage().getAllBookingData();
+
+    setState(() {
+      serviceId = bookingData['serviceId'];
+      providerId = bookingData['providerId'];
+      carId = bookingData['carId'];
+    });
+
+    print('Loaded Service ID: $serviceId');
+    print('Loaded Provider ID: $providerId');
+    print('Loaded Car ID: $carId');
   }
 
   Future<void> _getCurrentLocation() async {
@@ -65,40 +88,79 @@ class _MapScreenState extends State<MapScreen> {
   Future<void> _confirmLocation() async {
     if (_currentPosition == null) return;
 
+    // Check if all required booking data is available
+    if (serviceId == null || providerId == null || carId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text(
+                "Missing booking information. Please go back and select all required options.")),
+      );
+      return;
+    }
+
     setState(() {
       _isUpdating = true;
     });
 
-    bool success = await _apiService.updateLocation(
+    // First update location
+    bool locationUpdateSuccess = await _apiService.updateLocation(
       _currentPosition!.latitude,
       _currentPosition!.longitude,
     );
+
+    if (!locationUpdateSuccess) {
+      setState(() {
+        _isUpdating = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Failed to update location!")),
+      );
+      return;
+    }
+
+    // Then create service request
+    bool serviceRequestSuccess = await _apiService.requestService(
+        serviceId!,
+        carId!,
+        providerId!,
+        _currentPosition!.latitude,
+        _currentPosition!.longitude,
+        "");
 
     setState(() {
       _isUpdating = false;
     });
 
-    if (success) {
+    if (serviceRequestSuccess) {
+      // Clear the stored booking data after successful request
+      await BookingStorage().clearAllBookingData();
+
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Location updated successfully!")),
+        const SnackBar(content: Text("Service request created successfully!")),
       );
-      Navigator.pushNamed(context, AppRoutes.navigationMenu);
+      // Navigator.pushNamed(context, AppRoutes.navigationMenu);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const ServiceRequestsScreen(),
+        ),
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Failed to update location!")),
+        const SnackBar(content: Text("Failed to create service request!")),
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // Access the providers list from the ModelProvider
     final providerModel = Provider.of<ModelProvider<ProviderModel>>(context);
-    final providers = providerModel.items; // List of ProviderModel objects
+    final providers = providerModel.items;
 
     print("*-*-*-*-*-*-*-*-**-*-*Providers count: ${providers.length}");
     for (var provider in providers) {
-      print("Provider: ${provider.username}, Lat: ${provider.latitude}, Lng: ${provider.longitude}");
+      print(
+          "Provider: ${provider.username}, Lat: ${provider.latitude}, Lng: ${provider.longitude}");
     }
 
     return SafeArea(
@@ -107,7 +169,10 @@ class _MapScreenState extends State<MapScreen> {
           backgroundColor: Theme.of(context).primaryColor,
           elevation: 1,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white,),
+            icon: const Icon(
+              Icons.arrow_back,
+              color: Colors.white,
+            ),
             onPressed: () {
               Navigator.pop(context);
             },
@@ -131,14 +196,11 @@ class _MapScreenState extends State<MapScreen> {
                     initialCameraPosition:
                         CameraPosition(target: _currentPosition!, zoom: 13),
                     markers: {
-                      // Marker for the current user location
                       Marker(
                         markerId: const MarkerId("currentLocation"),
                         icon: BitmapDescriptor.defaultMarker,
                         position: _currentPosition!,
                       ),
-
-                      // Add markers for all providers
                       ...providers.map((provider) {
                         return Marker(
                           markerId: MarkerId(provider.providerId),
@@ -156,19 +218,26 @@ class _MapScreenState extends State<MapScreen> {
                     },
                   ),
             Positioned(
-              bottom: 30,
-              left: 20,
-              right: 20,
-              child: ElevatedButton(
-                onPressed: _isUpdating ? null : _confirmLocation,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xff3A3434),
-                  minimumSize: const Size(60, 60),
+              bottom: 40,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: SizedBox(
+                  width: 280,
+                  height: 50,
+                  child: ElevatedButton(
+                    onPressed: _isUpdating ? null : _confirmLocation,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xff3A3434),
+                    ),
+                    child: _isUpdating
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : const Text(
+                            "Confirm Location & Request Service",
+                            style: TextStyle(color: Colors.white, fontSize: 14),
+                          ),
+                  ),
                 ),
-                child: _isUpdating
-                    ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text("Confirm Location",
-                        style: TextStyle(color: Colors.white, fontSize: 16)),
               ),
             ),
           ],

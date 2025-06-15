@@ -17,12 +17,14 @@ void main() {
         ChangeNotifierProvider(create: (context) => ModelProvider<ServiceModel>()),
         ChangeNotifierProvider(create: (context) => ModelProvider<CarModel>()),
       ],
-      child: MyApp(),
+      child: const MyApp(),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Consumer<AuthProvider>(

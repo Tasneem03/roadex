@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intro_screens/core/models/service_model.dart';
-import 'package:intro_screens/map_pages/map_screen.dart';
+import 'package:intro_screens/screens/home/service_requests_screen.dart';
 
 import '../screens/home/cars_screen.dart';
 import '../screens/home/chat_screen.dart';
@@ -25,17 +24,18 @@ class _NavigationMenuState extends State<NavigationMenu> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> _screens = [
+    final List<Widget> screens = [
       // HomeScreen(),
       ServicesScreen(),
       CarsScreen(),
-      MapScreen(),
-      ChatScreen(),
-      ProfileScreen(),
+      // const MapScreen(),
+      const ServiceRequestsScreen(),
+      const ChatScreen(),
+      const ProfileScreen(),
     ];
     return Scaffold(
       backgroundColor: const Color(0xff3A3434),
-      body: _screens[_selectedIndex],
+      body: screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: const Color(0xff3A3434),
         unselectedItemColor: Colors.grey,
@@ -55,8 +55,8 @@ class _NavigationMenuState extends State<NavigationMenu> {
             label: "Cars",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.location_on),
-            label: "Location",
+            icon: Icon(Icons.miscellaneous_services_rounded),
+            label: "My Requests",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.chat),

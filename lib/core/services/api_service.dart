@@ -3,12 +3,14 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:intro_screens/core/models/provider_model.dart';
+import 'package:intro_screens/core/models/review_model.dart';
 import 'package:intro_screens/core/models/user_model.dart';
 import 'package:intro_screens/core/services/token_manager.dart';
 import 'package:intro_screens/providers/auth_provider.dart';
 
 import '../models/car_model.dart';
 import '../models/service_model.dart';
+import '../models/service_request_model.dart';
 
 class ApiService {
   final String baseUrl = "http://redexapis.runasp.net/api";
@@ -55,9 +57,6 @@ class ApiService {
         },
       );
 
-      // print("API Response Status Code: ${response.statusCode}");
-      // print("API Response Body: ${response.body}"); //
-
       if (response.statusCode == 200) {
         Map<String, dynamic> data = jsonDecode(response.body);
         return UserModel.fromJson(data);
@@ -76,7 +75,11 @@ class ApiService {
   }
 
   // add car function
-  Future<bool> addCar({required String licensePlate, required String make, required String model, required String year}) async {
+  Future<bool> addCar(
+      {required String licensePlate,
+      required String make,
+      required String model,
+      required String year}) async {
     var url = Uri.parse('$baseUrl/Vehicles');
 
     try {
@@ -167,7 +170,6 @@ class ApiService {
     }
   }
 
-
   // update location
   Future<bool> updateLocation(double latitude, double longitude) async {
     String? token = await tokenStorage.getToken();
@@ -188,9 +190,6 @@ class ApiService {
       }),
     );
 
-    // print("API Response Code: ${response.statusCode}");
-    // print("API Response Body: ${response.body}");
-
     if (response.statusCode == 200 || response.statusCode == 204) {
       return true;
     } else {
@@ -199,7 +198,8 @@ class ApiService {
   }
 
   // make a service request
-  Future<bool> requestService(int serviceId, int vehicleId, String providerId, double latitude, double longitude, String notes) async{
+  Future<bool> requestService(int serviceId, int vehicleId, String providerId,
+      double? latitude, double? longitude, String? notes) async {
     var url = Uri.parse('$baseUrl/ServiceRequests');
 
     try {
@@ -228,7 +228,8 @@ class ApiService {
       if (response.statusCode == 200) {
         return true;
       } else {
-        print("Error making request: ${response.statusCode} - ${response.body}");
+        print(
+            "Error making request: ${response.statusCode} - ${response.body}");
         return false;
       }
     } catch (e) {
@@ -237,13 +238,12 @@ class ApiService {
     }
   }
 
-
   // get available providers for a specific service
   Future<List<ProviderModel>> getAvailableProviders(int serviceId) async {
     var url = Uri.parse('$baseUrl/Providers/available-providers/$serviceId');
 
     try {
-      String? token = await tokenStorage.getToken(); // Retrieve the token
+      String? token = await tokenStorage.getToken();
 
       if (token == null) {
         throw Exception("No authentication token found.");
@@ -261,12 +261,172 @@ class ApiService {
         List<dynamic> jsonData = jsonDecode(response.body);
         return jsonData.map((json) => ProviderModel.fromJson(json)).toList();
       } else {
-        print('Request failed with status: ${response.statusCode}, body: ${response.body}');
+        print(
+            'Request failed with status: ${response.statusCode}, body: ${response.body}');
         return [];
       }
     } catch (e) {
       print('Error fetching providers: $e');
       return [];
+    }
+  }
+
+  // get service requests
+  Future<List<ServiceRequestModel>> getServiceRequests() async {
+    var url = Uri.parse('$baseUrl/ServiceRequests');
+
+    try {
+      String? token = await tokenStorage.getToken();
+
+      if (token == null) {
+        throw Exception("No authentication token found.");
+      }
+
+      final response = await http.get(
+        url,
+        headers: {
+          "Authorization": "Bearer $token",
+          "Content-Type": "application/json",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        List<dynamic> jsonData = jsonDecode(response.body);
+        return jsonData
+            .map((json) => ServiceRequestModel.fromJson(json))
+            .toList();
+      } else {
+        print(
+            'Request failed with status: ${response.statusCode}, body: ${response.body}');
+        return [];
+      }
+    } catch (e) {
+      print('Error fetching service requests: $e');
+      return [];
+    }
+  }
+
+  // add a review on service request
+  Future<bool> addReview(String serviceRequestId, int rating, String? comment,) async {
+    String? token = await tokenStorage.getToken();
+    if (token == null) {
+      return false;
+    }
+
+    final response = await http.put(
+      Uri.parse("$baseUrl/Reviews/review/$serviceRequestId"),
+      headers: {
+        "Authorization": "Bearer $token",
+        "Content-Type": "application/json; charset=UTF-8",
+      },
+      body: jsonEncode({
+        "rating": rating,
+        "comment": comment
+      }),
+    );
+
+    // Add debugging
+    print("Response status: ${response.statusCode}");
+    print("Response body: ${response.body}");
+
+    if (response.statusCode == 200 || response.statusCode == 204) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  // get user reviews
+  Future<List<ReviewModel>> getCustomerReviews(String customerId) async {
+    var url = Uri.parse('$baseUrl/Reviews/customer/reviews$customerId');
+
+    try {
+      String? token = await tokenStorage.getToken();
+
+      if (token == null) {
+        throw Exception("No authentication token found.");
+      }
+
+      final response = await http.get(
+        url,
+        headers: {
+          "Authorization": "Bearer $token",
+          "Content-Type": "application/json",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        List<dynamic> jsonData = jsonDecode(response.body);
+        return jsonData.map((json) => ReviewModel.fromJson(json)).toList();
+      } else {
+        print(
+            'Request failed with status: ${response.statusCode}, body: ${response.body}');
+        return [];
+      }
+    } catch (e) {
+      print('Error fetching providers: $e');
+      return [];
+    }
+  }
+
+  // get user reviews
+  Future<List<ReviewModel>> getProviderReviews(String providerId) async {
+    var url = Uri.parse('$baseUrl/Reviews/provider/reviews/$providerId');
+
+    try {
+      String? token = await tokenStorage.getToken();
+
+      if (token == null) {
+        throw Exception("No authentication token found.");
+      }
+
+      final response = await http.get(
+        url,
+        headers: {
+          "Authorization": "Bearer $token",
+          "Content-Type": "application/json",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        List<dynamic> jsonData = jsonDecode(response.body);
+         print("review response = ${jsonData.map((json) => ReviewModel.fromJson(json)).toList()}");
+        return jsonData.map((json) => ReviewModel.fromJson(json)).toList();
+      } else {
+        print(
+            'Request failed with status: ${response.statusCode}, body: ${response.body}');
+        return [];
+      }
+    } catch (e) {
+      print('Error fetching providers: $e');
+      return [];
+    }
+  }
+
+  // update profile info
+  Future<bool> updateProfile(String username, String email, String phoneNumber) async {
+    String? token = await tokenStorage.getToken();
+    if (token == null) {
+      return false;
+    }
+
+    final response = await http.put(
+      Uri.parse("$baseUrl/Customers/me"),
+      headers: {
+        "Authorization": "Bearer $token",
+        "Content-Type": "application/json; charset=UTF-8",
+      },
+      body: jsonEncode({
+        "username": username,
+        "email": email,
+        "phoneNumber": phoneNumber
+      }),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 204) {
+      return true;
+    } else {
+      return false;
     }
   }
 
