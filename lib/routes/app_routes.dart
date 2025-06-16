@@ -7,6 +7,7 @@ import '../screens/auth/splash_screen.dart';
 import '../screens/home/cars_screen.dart';
 import '../screens/home/chat_screen.dart';
 import '../screens/home/home_screen.dart';
+import '../screens/home/predict_screen.dart';
 import '../screens/home/profile_screen.dart';
 import '../screens/home/services_screen.dart';
 import '../screens/onboarding/intro_screen.dart';
@@ -26,6 +27,7 @@ class AppRoutes {
   static const String navigationMenu = '/navigationMenu';
   static const String providers = '/providers';
   static const String map = '/map';
+  static const String predict = '/predict';
 
   static Map<String, Widget Function(BuildContext)> routes = {
     splash: (context) => const SplashScreen(),
@@ -34,10 +36,11 @@ class AppRoutes {
     signup: (context) => const SignupScreen(),
     home: (context) => const HomeScreen(),
     profile: (context) => const ProfileScreen(),
-    chat: (context) => const ChatScreen(),
+    chat: (context) => ChatScreen(),
     services: (context) => ServicesScreen(),
     myCars: (context) => CarsScreen(),
     navigationMenu: (context) => const NavigationMenu(),
     map: (context) => const MapScreen(),
+    predict: (context) => PredictScreen(),
   };
 }

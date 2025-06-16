@@ -3,6 +3,7 @@ import 'package:intro_screens/screens/home/service_requests_screen.dart';
 
 import '../screens/home/cars_screen.dart';
 import '../screens/home/chat_screen.dart';
+import '../screens/home/predict_screen.dart';
 import '../screens/home/profile_screen.dart';
 import '../screens/home/services_screen.dart';
 
@@ -30,7 +31,8 @@ class _NavigationMenuState extends State<NavigationMenu> {
       CarsScreen(),
       // const MapScreen(),
       const ServiceRequestsScreen(),
-      const ChatScreen(),
+      ChatScreen(),
+      PredictScreen(),
       const ProfileScreen(),
     ];
     return Scaffold(
@@ -61,6 +63,10 @@ class _NavigationMenuState extends State<NavigationMenu> {
           BottomNavigationBarItem(
             icon: Icon(Icons.chat),
             label: "Chat",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.health_and_safety),
+            label: "Check",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
