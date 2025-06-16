@@ -7,7 +7,7 @@ import '../../core/services/booking_storage.dart';
 import '../../core/services/api_service.dart';
 
 class CarsScreen extends StatefulWidget {
-  CarsScreen({Key? key, this.initialTabIndex = 0}) : super(key: key);
+  const CarsScreen({super.key, this.initialTabIndex = 0});
   final int initialTabIndex;
 
   @override

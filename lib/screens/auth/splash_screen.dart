@@ -80,7 +80,7 @@ class _SplashScreenState extends State<SplashScreen> {
     });
 
     await Future.delayed(const Duration(milliseconds: 1500));
-    if (!mounted) return; // Check again before accessing context
+    if (!mounted) return;
 
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
 

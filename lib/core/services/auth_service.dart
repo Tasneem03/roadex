@@ -40,7 +40,6 @@ class AuthService {
       await TokenStorage().saveToken(token);
       return true;
     } else {
-      // print("Login Failed: ${result['message']}");
       return false;
     }
   }

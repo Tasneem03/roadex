@@ -45,58 +45,6 @@ class _SignupScreenState extends State<SignupScreen> {
     );
   }
 
-  /*Future<void> _submitForm(String username, String email, String password, String phoneNumber) async {
-    if (!_formSignUpKey.currentState!.validate()) {
-      return;
-    }
-
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      final authService = SignupAuth();
-      final response = await authService.signUp(username, email, password, phoneNumber);
-
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-
-        if (response.success) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(response.message),
-              backgroundColor: Colors.green,
-            ),
-          );
-          Navigator.pushReplacementNamed(context, AppRoutes.login);
-        } else {
-          // Show error message
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(response.message),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('An unexpected error occurred. Please try again.'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
-  }
-*/
-
   Future<void> _submitForm(String username, String email, String password, String phoneNumber) async {
     if (!_formSignUpKey.currentState!.validate()) return;
 
