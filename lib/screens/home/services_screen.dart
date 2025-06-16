@@ -41,7 +41,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: const Color(0xffe4dfdf),
+        backgroundColor: Colors.grey[50],
       appBar: AppBar(
         title: Text(
           "Our Services",
