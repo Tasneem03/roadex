@@ -44,6 +44,7 @@ dependencies:
   http: ^1.3.0
   flutter_secure_storage: ^9.2.4
   provider: ^6.1.2
+  url_launcher: ^6.2.1
 
 
 dev_dependencies:
@@ -72,6 +73,7 @@ flutter:
   assets:
     - assets/images/intro/
     - assets/images/services/
+    - assets/images/hci/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
